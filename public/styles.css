@@ -6,3 +6,10 @@
 .primary-text-color    { color: #212121; }
 .secondary-text-color  { color: #757575; }
 .divider-color         { border-color: #BDBDBD; }
+
+@import url('https://fonts.googleapis.com/css?family=Catamaran:300,400');
+
+.brand-logo {
+  font-family: Catamaran, sans-serif;
+  font-weight: 300;
+}
