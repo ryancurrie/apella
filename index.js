@@ -12,13 +12,20 @@ const staticMiddleware = express.static(publicPath)
 
 app.use(staticMiddleware)
 
-app.get('/get-reps/:zip', ({params: { zip }}, res) => {
-  superagent.get('https://www.googleapis.com/civicinfo/v2/representatives')
-  .query({ key: googleCivicKey, address: zip, roles: ['legislatorupperbody', 'legislatorlowerbody']})
-  .end((err, result) => {
-    if (err) {return console.log(err)}
-    res.json(result.body)
-  })
+app.get('/get-reps/:zip', ({ params: { zip } }, res) => {
+  superagent
+    .get('https://www.googleapis.com/civicinfo/v2/representatives')
+    .query({
+      key: googleCivicKey,
+      address: zip,
+      roles: ['legislatorupperbody', 'legislatorlowerbody']
+    })
+    .end((err, result) => {
+      if (err) {
+        return console.log(err)
+      }
+      res.json(result.body.officials)
+    })
 })
 
 app.listen(3000, () => {
