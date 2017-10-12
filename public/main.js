@@ -32,6 +32,7 @@ const renderSearch = () => {
 
   const $button = document.createElement('a')
   $button.classList.add('waves-effect', 'waves-light', 'btn-large')
+  $button.setAttribute('id', 'zip-search-button')
   $button.textContent = 'Search'
 
   $form.appendChild($headlineRow)
@@ -47,3 +48,18 @@ const renderSearch = () => {
 }
 
 $findRep.appendChild(renderSearch())
+
+const $searchButton = document.querySelector('#zip-search-button')
+
+$searchButton.addEventListener('click', event => {
+  event.preventDefault()
+  const search = document.querySelector('#zip-code').value
+
+  if (search.length !== 5) {
+    Materialize.toast('Please enter a valid ZIP code', 4000)
+  } else {
+    fetch(`/get-reps/${search}`).then(results => {
+      return results.json()
+    })
+  }
+})
