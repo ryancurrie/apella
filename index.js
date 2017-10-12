@@ -28,14 +28,21 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
         address: zip,
         roles: ['legislatorupperbody', 'legislatorlowerbody']
       })
-      .then((result, err) => {
+      .then((result, errA) => {
         if (err) {
-          console.log(err)
+          console.log(errA)
+          res.sendStatus(500)
           process.exit(1)
         }
         return result.body.officials
       })
-      .then(reps => {
+      .then((reps, errB) => {
+        if (errB) {
+          console.log(errB)
+          res.sendStatus(500)
+          process.exit(1)
+        }
+
         updatePhone(reps).then(updated => {
           Promise.all(
             updated.reduce((promises, record) => {
@@ -50,15 +57,27 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
                       { $set: { photoUrl: record.photoUrl } },
                       { returnOriginal: false }
                     )
-                    /* .toArray() */
-                    .then(results => {
-                      resolve(results)
+                    .then((results, errC) => {
+                      if (errC) {
+                        console.log(errC)
+                        res.sendStatus(500)
+                        process.exit(1)
+                      } else {
+                        resolve(results)
+                      }
                     })
                 })
               ]
             }, [])
-          ).then(x => {
-            res.send(x)
+          ).then((json, errD) => {
+            if (errD) {
+              console.log(errD)
+              res.sendStatus(500)
+              process.exit(1)
+            } else {
+              res.send(json)
+              res.sendStatus(200)
+            }
           })
         })
       })
