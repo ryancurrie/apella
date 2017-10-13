@@ -74,7 +74,7 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
       .get(
         `https://api.propublica.org/congress/v1/members/${id}/bills/introduced.json`
       )
-      .set('x-api-key', propublicaKey)
+      .set('x-api-key', process.env.PP_Key)
       .then((resp, err) => {
         if (err) {
           console.log(err)

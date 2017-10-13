@@ -162,6 +162,11 @@ const getReps = query => {
   return fetch(url).then(results => results.json())
 }
 
+const getRepBills = id => {
+  const url = `/bills-by-rep/${id}`
+  return fetch(url).then(results => results.json())
+}
+
 const showReps = (location, query) => {
   getReps(query).then(reps => {
     location.innerHTML = ''
