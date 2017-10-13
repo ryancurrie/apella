@@ -111,6 +111,14 @@ const renderReps = ({
   $cardAction.setAttribute('class', 'see-bill')
   $cardAction.setAttribute('data-id', `${id}`)
   $cardAction.textContent = 'See Bills'
+  $cardAction.addEventListener('click', event => {
+    event.preventDefault()
+    if (event.target.tagName.toLowerCase() === 'a') {
+      const $id = event.target.dataset.id
+
+      $headerMsg.textContent = ''
+    }
+  })
 
   $repCard.appendChild($card)
   $card.appendChild($imgDiv)
