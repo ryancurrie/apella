@@ -1,4 +1,5 @@
 const express = require('express')
+require('dotenv').config()
 const path = require('path')
 const { MongoClient } = require('mongodb')
 const superagent = require('superagent')
@@ -12,7 +13,6 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
   }
   const representatives = db.collection('representatives')
 
-  const googleCivicKey = 'AIzaSyBql7aJLrYqP0dOY1nfo7kFoGjKsnQ4TVY'
   const app = express()
 
   const publicPath = path.join(__dirname, 'public')
@@ -24,7 +24,7 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
     superagent
       .get('https://www.googleapis.com/civicinfo/v2/representatives')
       .query({
-        key: googleCivicKey,
+        key: process.env.GC_Key,
         address: zip,
         roles: ['legislatorupperbody', 'legislatorlowerbody']
       })
