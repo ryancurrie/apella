@@ -15,6 +15,7 @@ const renderSearch = () => {
 
   const $zipRow = document.createElement('div')
   $zipRow.classList.add('row', 'input-field')
+  $zipRow.setAttribute('id', 'zip-search-fields')
 
   const $icon = document.createElement('i')
   $icon.classList.add('material-icons', 'prefix')
@@ -50,7 +51,18 @@ const renderSearch = () => {
 }
 
 const renderReps = ({
-  value: { chamber, id, first_name, last_name, party, photoUrl, short_title }
+  value: {
+    chamber,
+    id,
+    first_name,
+    last_name,
+    party,
+    photoUrl,
+    short_title,
+    contact_form,
+    phone,
+    office
+  }
 }) => {
   const $repCard = document.createElement('div')
   $repCard.classList.add('row')
@@ -76,6 +88,21 @@ const renderReps = ({
   const $repName = document.createElement('p')
   $repName.textContent = `${short_title} ${first_name} ${last_name} (${party})`
 
+  const $office = document.createElement('p')
+  $office.textContent = `${office}`
+
+  const $phonePara = document.createElement('p')
+
+  const $phone = document.createElement('a')
+  $phone.textContent = `${phone}`
+  $phone.setAttribute('href', `tel:${phone}`)
+
+  const $contactPara = document.createElement('p')
+
+  const $contact = document.createElement('a')
+  $contact.textContent = 'Email'
+  $contact.setAttribute('href', `${contact_form}`)
+
   const $actionDiv = document.createElement('div')
   $actionDiv.classList.add('card-action')
 
@@ -92,6 +119,11 @@ const renderReps = ({
   $cardDiv.appendChild($contentDiv)
   $contentDiv.appendChild($chamber)
   $contentDiv.appendChild($repName)
+  $contentDiv.appendChild($office)
+  $contentDiv.appendChild($phonePara)
+  $phonePara.appendChild($phone)
+  $contentDiv.appendChild($contactPara)
+  $contactPara.appendChild($contact)
   $cardDiv.appendChild($actionDiv)
   $actionDiv.appendChild($cardAction)
 
