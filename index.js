@@ -8,7 +8,6 @@ const { updatePhone } = require('./phone.js')
 
 MongoClient.connect('mongodb://localhost/apella', (err, db) => {
   if (err) {
-    console.error(err)
     process.exit(1)
   }
   const representatives = db.collection('representatives')
@@ -28,9 +27,8 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
         address: zip,
         roles: ['legislatorupperbody', 'legislatorlowerbody']
       })
-      .then((result, errA) => {
+      .then((result, err) => {
         if (err) {
-          console.log(errA)
           return res.sendStatus(500)
         }
         return result.body.officials
@@ -50,9 +48,8 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
                       { $set: { photoUrl: record.photoUrl } },
                       { returnOriginal: false }
                     )
-                    .then((results, errB) => {
-                      if (errB) {
-                        console.log(errB)
+                    .then((results, err) => {
+                      if (err) {
                         return res.sendStatus(500)
                       } else {
                         resolve(results)
@@ -61,9 +58,8 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
                 })
               ]
             }, [])
-          ).then((json, errC) => {
-            if (errC) {
-              console.log(errC)
+          ).then((json, err) => {
+            if (err) {
               return res.sendStatus(500)
             } else {
               return res.status(200).send(json)
