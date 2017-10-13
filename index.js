@@ -1,4 +1,5 @@
 const express = require('express')
+require('dotenv').config()
 const path = require('path')
 const { MongoClient } = require('mongodb')
 const superagent = require('superagent')
@@ -7,13 +8,10 @@ const { updatePhone } = require('./phone.js')
 
 MongoClient.connect('mongodb://localhost/apella', (err, db) => {
   if (err) {
-    console.error(err)
     process.exit(1)
   }
   const representatives = db.collection('representatives')
 
-  const googleCivicKey = 'AIzaSyBql7aJLrYqP0dOY1nfo7kFoGjKsnQ4TVY'
-  const propublicaKey = '5WEm5rxoyXmpNza9mw4gMKIp1wwXHOeTgkqYnwan'
   const app = express()
 
   const publicPath = path.join(__dirname, 'public')
@@ -25,13 +23,12 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
     superagent
       .get('https://www.googleapis.com/civicinfo/v2/representatives')
       .query({
-        key: googleCivicKey,
+        key: process.env.GC_Key,
         address: zip,
         roles: ['legislatorupperbody', 'legislatorlowerbody']
       })
-      .then((result, errA) => {
+      .then((result, err) => {
         if (err) {
-          console.log(errA)
           return res.sendStatus(500)
         }
         return result.body.officials
@@ -51,9 +48,8 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
                       { $set: { photoUrl: record.photoUrl } },
                       { returnOriginal: false }
                     )
-                    .then((results, errB) => {
-                      if (errB) {
-                        console.log(errB)
+                    .then((results, err) => {
+                      if (err) {
                         return res.sendStatus(500)
                       } else {
                         resolve(results)
@@ -62,9 +58,8 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
                 })
               ]
             }, [])
-          ).then((json, errC) => {
-            if (errC) {
-              console.log(errC)
+          ).then((json, err) => {
+            if (err) {
               return res.sendStatus(500)
             } else {
               return res.status(200).send(json)

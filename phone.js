@@ -4,16 +4,14 @@ function formatPhone(phone) {
 
 function updatePhone(collection) {
   return new Promise((resolve, reject) => {
-    const newCollection = []
-    for (let i = 0; i < collection.length; i++) {
-      const relevantPhones = collection[i].phones
-      const newPhone =
-        relevantPhones.length > 0 ? formatPhone(relevantPhones[0]) : false
-      const newPhoneArray = newPhone ? [newPhone] : []
-      newCollection.push(
-        Object.assign(collection[i], { phones: newPhoneArray })
-      )
-    }
+    resolve(
+      collection.map(senator => {
+        return Object.assign({}, senator, {
+          phones: [formatPhone(senator.phones[0])]
+        })
+      })
+    )
+
     resolve(newCollection)
   })
 }
