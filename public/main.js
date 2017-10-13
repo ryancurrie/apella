@@ -130,22 +130,32 @@ const renderReps = ({
   return $repCard
 }
 
+/*For showing bills by member*/
+
+const renderRepBills = bills => {
+  const $billByRep = document.createElement('div')
+  $billsByRep.classList.add('row')
+
+  const $listWrapper = document.createElement('div')
+  $listWrapper.classList('collection', 'col', 'l6', 's12', 'offset-l3')
+  $listWrapper.setAttribute('id', 'bills-list-rep')
+
+  return $billsByRep
+}
+
+/*Initiates page*/
+
 $findRep.appendChild(renderSearch())
 
+/*Search Functions*/
+
 const getReps = query => {
-  console.log(query)
-  console.log(typeof query)
   const url = `/get-reps/${query}`
-  console.log(url)
-  console.log(typeof url)
   return fetch(url).then(results => results.json())
 }
 
 const showReps = (location, query) => {
-  console.log(query)
-  console.log(typeof query)
   getReps(query).then(reps => {
-    console.log(reps)
     location.innerHTML = ''
 
     reps
