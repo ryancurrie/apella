@@ -1,8 +1,69 @@
-.dark-primary-color    { background: #1976D2; }
-.default-primary-color { background: #2196F3; }
-.light-primary-color   { background: #BBDEFB; }
-.text-primary-color    { color: #FFFFFF; }
-.accent-color          { background: #FF5252; }
-.primary-text-color    { color: #212121; }
-.secondary-text-color  { color: #757575; }
-.divider-color         { border-color: #BDBDBD; }
+.dark-primary-color {
+  background: #1976d2;
+}
+
+.default-primary-color {
+  background: #2196f3;
+}
+
+.light-primary-color {
+  background: #bbdefb;
+}
+
+.text-primary-color {
+  color: #fff;
+}
+
+.accent-color {
+  background: #ff5252;
+}
+
+.primary-text-color {
+  color: #212121;
+}
+
+.secondary-text-color {
+  color: #757575;
+}
+
+.divider-color {
+  border-color: #bdbdbd;
+}
+
+@import url('https://fonts.googleapis.com/css?family=Catamaran:300,400');
+
+.brand-logo {
+  font-family: Catamaran, sans-serif;
+  font-weight: 300;
+}
+
+.material-icons {
+  color: rgba(33, 150, 243, 1);
+}
+
+#zip-search-fields .prefix.active {
+  color: rgba(187, 222, 251, 1);
+}
+
+#zip-search-fields input[type='text']:focus + label {
+  color: #bbdefb;
+}
+
+#zip-search-fields input[type='text']:focus {
+  border-bottom: 1px solid #bbdefb;
+  box-shadow: 0 1px 0 0 #bbdefb;
+}
+
+#find-rep .btn-large {
+  background-color: #ff5252;
+}
+
+.rep-photo img {
+  width: 10rem !important;
+  height: 13rem !important;
+}
+
+.see-bill {
+  color: #2196f3 !important;
+  float: right;
+}
