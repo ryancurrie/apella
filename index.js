@@ -13,6 +13,7 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
   const representatives = db.collection('representatives')
 
   const googleCivicKey = 'AIzaSyBql7aJLrYqP0dOY1nfo7kFoGjKsnQ4TVY'
+  const propublicaKey = '5WEm5rxoyXmpNza9mw4gMKIp1wwXHOeTgkqYnwan'
   const app = express()
 
   const publicPath = path.join(__dirname, 'public')
@@ -70,6 +71,22 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
             }
           })
         })
+      })
+  })
+
+  app.get('/bills-by-rep/:id', ({ params: { id } }, res) => {
+    superagent
+      .get(
+        `https://api.propublica.org/congress/v1/members/${id}/bills/introduced.json`
+      )
+      .set('x-api-key', propublicaKey)
+      .then((resp, err) => {
+        if (err) {
+          console.log(err)
+          return res.sendStatus(500)
+        } else {
+          res.status(200).send(resp.body.results)
+        }
       })
   })
   app.listen(3000, () => {
