@@ -57,3 +57,11 @@
 #find-rep .btn-large {
   background-color: #ff5252;
 }
+
+.rep-photo {
+  width: 225px;
+}
+
+.card .card-action .see-bill {
+  color: #2196f3;
+}

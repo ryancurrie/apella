@@ -31,18 +31,11 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
       .then((result, errA) => {
         if (err) {
           console.log(errA)
-          res.sendStatus(500)
-          process.exit(1)
+          return res.sendStatus(500)
         }
         return result.body.officials
       })
-      .then((reps, errB) => {
-        if (errB) {
-          console.log(errB)
-          res.sendStatus(500)
-          process.exit(1)
-        }
-
+      .then(reps => {
         updatePhone(reps).then(updated => {
           Promise.all(
             updated.reduce((promises, record) => {
@@ -57,11 +50,10 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
                       { $set: { photoUrl: record.photoUrl } },
                       { returnOriginal: false }
                     )
-                    .then((results, errC) => {
-                      if (errC) {
-                        console.log(errC)
-                        res.sendStatus(500)
-                        process.exit(1)
+                    .then((results, errB) => {
+                      if (errB) {
+                        console.log(errB)
+                        return res.sendStatus(500)
                       } else {
                         resolve(results)
                       }
@@ -69,14 +61,12 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
                 })
               ]
             }, [])
-          ).then((json, errD) => {
-            if (errD) {
-              console.log(errD)
-              res.sendStatus(500)
-              process.exit(1)
+          ).then((json, errC) => {
+            if (errC) {
+              console.log(errC)
+              return res.sendStatus(500)
             } else {
-              res.send(json)
-              res.sendStatus(200)
+              return res.status(200).send(json)
             }
           })
         })
