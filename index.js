@@ -84,8 +84,8 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
       })
   })
 
-  app.get('/get-rep-by-id/:repId', ({ params: repId }, res) => {
-    representatives.findOne({ id: repId.repId }, (err, resp) => {
+  app.get('/get-rep-by-id/:repId', ({ params: { repId } }, res) => {
+    representatives.findOne({ id: repId }, (err, resp) => {
       if (err) {
         return res.sendStatus(500)
       } else {
