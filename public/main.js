@@ -93,7 +93,6 @@ const renderLatestBills = collection => {
 
     $listWrapper.appendChild($bill)
   }
-
   return $latestBills
 }
 
@@ -289,13 +288,13 @@ const getLatestBills = chamber => {
   return fetch(`/bills/${chamber}/latest`).then(results => results.json())
 }
 
-const getRepBills = id => {
-  const url = `/bills-by-rep/${id}`
+const getRepById = id => {
+  const url = `/rep/${id}`
   return fetch(url).then(results => results.json())
 }
 
-const getRepById = id => {
-  const url = `/get-rep-by-id/${id}`
+const getRepBills = id => {
+  const url = `/rep/${id}/bills`
   return fetch(url).then(results => results.json())
 }
 
@@ -310,15 +309,6 @@ const showReps = (location, query) => {
       .forEach($repCard => location.appendChild($repCard))
   })
 }
-const getRepById = id => {
-  const url = `/rep/${id}`
-  return fetch(url).then(results => results.json())
-}
-
-const getRepBills = id => {
-  const url = `/rep/${id}/bills`
-  return fetch(url).then(results => results.json())
-}
 
 const showRepBills = (location, query) => {
   getRepById(query).then(rep => {
@@ -331,17 +321,17 @@ const showRepBills = (location, query) => {
   })
 }
 
-const showLatestBills = (location, chamber) => {
+/*const showLatestBills = (location, chamber) => {
   getLatestBills(chamber).then(latest => {
     location.appendChild(renderLatestBills(latest))
   })
-}
+}*/
 
 /*Initiates page*/
 
 $findRep.appendChild(renderSearch())
-$latestSenate.appendChild(showLatestBills($latestSenate, 'senate'))
-$latestHouse.appendChild(showLatestBills($latestHouse, 'house'))
+$latestSenate.appendChild(renderLatestBills(getLatestBills('senate')))
+/*$latestHouse.appendChild(showLatestBills($latestHouse, 'house'))*/
 
 /* Event listeners*/
 const $searchButton = document.querySelector('#zip-search-button')
