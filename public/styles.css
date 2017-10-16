@@ -67,3 +67,7 @@
   color: #2196f3 !important;
   float: right;
 }
+
+.collection a.bill-listing {
+  color: #212121;
+}

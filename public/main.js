@@ -116,7 +116,9 @@ const renderReps = ({
     if (event.target.tagName.toLowerCase() === 'a') {
       const $id = event.target.dataset.id
 
-      $headerMsg.textContent = ''
+      showRepBills($apella, $id)
+
+      $headerMsg.textContent = 'Bills By Your Representative'
     }
   })
 
@@ -138,15 +140,93 @@ const renderReps = ({
   return $repCard
 }
 
+const renderRep = ({
+  chamber,
+  id,
+  first_name,
+  last_name,
+  party,
+  photoUrl,
+  short_title,
+  contact_form,
+  phone,
+  office
+}) => {
+  const $repCard = document.createElement('div')
+  $repCard.classList.add('row')
+
+  const $card = document.createElement('div')
+  $card.classList.add('card', 'horizontal', 'col', 'l6', 's12', 'offset-l3')
+
+  const $imgDiv = document.createElement('div')
+  $imgDiv.classList.add('card-image', 'rep-photo')
+
+  const $img = document.createElement('img')
+  $img.setAttribute('src', photoUrl)
+
+  const $cardDiv = document.createElement('div')
+  $cardDiv.classList.add('card-stacked')
+
+  const $contentDiv = document.createElement('div')
+  $contentDiv.classList.add('card-content')
+
+  const $chamber = document.createElement('p')
+  $chamber.textContent = chamber
+
+  const $repName = document.createElement('p')
+  $repName.textContent = `${short_title} ${first_name} ${last_name} (${party})`
+
+  const $office = document.createElement('p')
+  $office.textContent = `${office}`
+
+  const $phonePara = document.createElement('p')
+
+  const $phone = document.createElement('a')
+  $phone.textContent = `${phone}`
+  $phone.setAttribute('href', `tel:${phone}`)
+
+  const $contactPara = document.createElement('p')
+
+  const $contact = document.createElement('a')
+  $contact.textContent = 'Email'
+  $contact.setAttribute('href', `${contact_form}`)
+
+  $repCard.appendChild($card)
+  $card.appendChild($imgDiv)
+  $imgDiv.appendChild($img)
+  $card.appendChild($cardDiv)
+  $cardDiv.appendChild($contentDiv)
+  $contentDiv.appendChild($chamber)
+  $contentDiv.appendChild($repName)
+  $contentDiv.appendChild($office)
+  $contentDiv.appendChild($phonePara)
+  $phonePara.appendChild($phone)
+  $contentDiv.appendChild($contactPara)
+  $contactPara.appendChild($contact)
+
+  return $repCard
+}
+
 /*For showing bills by member*/
 
-const renderRepBills = bills => {
-  const $billByRep = document.createElement('div')
+const renderRepBills = collection => {
+  const $billsByRep = document.createElement('div')
   $billsByRep.classList.add('row')
 
   const $listWrapper = document.createElement('div')
-  $listWrapper.classList('collection', 'col', 'l6', 's12', 'offset-l3')
+  $listWrapper.classList.add('collection', 'col', 'l6', 's12', 'offset-l3')
   $listWrapper.setAttribute('id', 'bills-list-rep')
+
+  $billsByRep.appendChild($listWrapper)
+
+  for (let prop in collection) {
+    const $bill = document.createElement('a')
+    $bill.classList.add('collection-item', 'bill-listing')
+    $bill.setAttribute('href', collection[prop].bill_id)
+    $bill.textContent = collection[prop].title
+
+    $listWrapper.appendChild($bill)
+  }
 
   return $billsByRep
 }
@@ -162,11 +242,6 @@ const getReps = query => {
   return fetch(url).then(results => results.json())
 }
 
-const getRepBills = id => {
-  const url = `/bills-by-rep/${id}`
-  return fetch(url).then(results => results.json())
-}
-
 const showReps = (location, query) => {
   getReps(query).then(reps => {
     location.innerHTML = ''
@@ -176,7 +251,28 @@ const showReps = (location, query) => {
       .forEach($repCard => location.appendChild($repCard))
   })
 }
+const getRepById = id => {
+  const url = `/get-rep-by-id/${id}`
+  return fetch(url).then(results => results.json())
+}
 
+const getRepBills = id => {
+  const url = `/bills-by-rep/${id}`
+  return fetch(url).then(results => results.json())
+}
+
+const showRepBills = (location, query) => {
+  getRepById(query).then(rep => {
+    location.innerHTML = ''
+    location.appendChild(renderRep(rep))
+  })
+
+  getRepBills(query).then(bills => {
+    location.appendChild(renderRepBills(bills))
+  })
+}
+
+/* Event listeners*/
 const $searchButton = document.querySelector('#zip-search-button')
 
 $searchButton.addEventListener('click', event => {

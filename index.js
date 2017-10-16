@@ -69,21 +69,31 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
       })
   })
 
-  app.get('/bills-by-rep/:id', ({ params: { id } }, res) => {
+  app.get('/bills-by-rep/:repId', ({ params: { repId } }, res) => {
     superagent
       .get(
-        `https://api.propublica.org/congress/v1/members/${id}/bills/introduced.json`
+        `https://api.propublica.org/congress/v1/members/${repId}/bills/introduced.json`
       )
       .set('x-api-key', process.env.PP_Key)
       .then((resp, err) => {
         if (err) {
-          console.log(err)
           return res.sendStatus(500)
         } else {
-          res.status(200).send(resp.body.results)
+          res.status(200).send(resp.body.results[0].bills)
         }
       })
   })
+
+  app.get('/get-rep-by-id/:repId', ({ params: repId }, res) => {
+    representatives.findOne({ id: repId.repId }, (err, resp) => {
+      if (err) {
+        return res.sendStatus(500)
+      } else {
+        res.status(200).json(resp)
+      }
+    })
+  })
+
   app.listen(3000, () => {
     console.log('Listening on port 3000!')
   })
