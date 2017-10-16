@@ -252,12 +252,12 @@ const showReps = (location, query) => {
   })
 }
 const getRepById = id => {
-  const url = `/get-rep-by-id/${id}`
+  const url = `/rep/${id}`
   return fetch(url).then(results => results.json())
 }
 
 const getRepBills = id => {
-  const url = `/bills-by-rep/${id}`
+  const url = `/rep/${id}/bills`
   return fetch(url).then(results => results.json())
 }
 

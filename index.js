@@ -69,7 +69,7 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
       })
   })
 
-  app.get('/bills-by-rep/:repId', ({ params: { repId } }, res) => {
+  app.get('/rep/:repId/bills', ({ params: { repId } }, res) => {
     superagent
       .get(
         `https://api.propublica.org/congress/v1/members/${repId}/bills/introduced.json`
@@ -84,7 +84,7 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
       })
   })
 
-  app.get('/get-rep-by-id/:repId', ({ params: { repId } }, res) => {
+  app.get('/rep/:repId', ({ params: { repId } }, res) => {
     representatives.findOne({ id: repId }, (err, resp) => {
       if (err) {
         return res.sendStatus(500)
