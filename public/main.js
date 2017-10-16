@@ -310,6 +310,15 @@ const showReps = (location, query) => {
       .forEach($repCard => location.appendChild($repCard))
   })
 }
+const getRepById = id => {
+  const url = `/rep/${id}`
+  return fetch(url).then(results => results.json())
+}
+
+const getRepBills = id => {
+  const url = `/rep/${id}/bills`
+  return fetch(url).then(results => results.json())
+}
 
 const showRepBills = (location, query) => {
   getRepById(query).then(rep => {
