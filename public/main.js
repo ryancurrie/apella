@@ -52,25 +52,49 @@ const renderSearch = () => {
   return $form
 }
 
-const renderLatestSenate = collection => {
-  const $latestSenateBills = document.createElement('div')
-  $latestSenateBills.classList.add('row')
+const renderLatestBills = collection => {
+  const $latestBills = document.createElement('div')
+  $latestBills.classList.add('row')
 
-  const $listWrapper = document.createElement('div')
+  const $listWrapper = document.createElement('ul')
   $listWrapper.classList.add('collection', 'col', 's12')
 
-  $latestSenateBills.appendChild($listWrapper)
+  $latestBills.appendChild($listWrapper)
 
   for (let prop in collection) {
-    const $bill = document.createElement('a')
+    const $bill = document.createElement('li')
     $bill.classList.add('collection-item', 'bill-listing')
-    $bill.setAttribute('href', collection[prop].bill_id)
-    $bill.textContent = collection[prop].title
+
+    const $billWrapper = document.createElement('div')
+
+    const $title = document.createElement('a')
+    $title.textContent = collection[prop].title
+    $title.setAttribute('href', collection[prop].bill_id)
+    $title.textContent = collection[prop].title
+
+    const $details = document.createElement('div')
+    $details.classList.add('listing-details')
+
+    const $date = document.createElement('p')
+    $date.textContent = collection[prop].introduced_date
+
+    const $sponsor = document.createElement('p')
+    $sponsor.textContent =
+      collection[prop].sponsor_name +
+      ' (' +
+      collection[prop].sponsor_party +
+      ')'
+
+    $bill.appendChild($billWrapper)
+    $billWrapper.appendChild($title)
+    $billWrapper.appendChild($details)
+    $details.appendChild($sponsor)
+    $details.appendChild($date)
 
     $listWrapper.appendChild($bill)
   }
 
-  return $latestSenateBills
+  return $latestBills
 }
 
 const renderReps = ({
@@ -261,12 +285,8 @@ const getReps = query => {
   return fetch(url).then(results => results.json())
 }
 
-const getLatestSenate = () => {
-  return fetch('/latest-bills-senate').then(results => results.json())
-}
-
-const getLatestHouse = () => {
-  return fetch('/latest-bills-house').then(results => results.json())
+const getLatestBills = chamber => {
+  return fetch(`/bills/${chamber}/latest`).then(results => results.json())
 }
 
 const getRepBills = id => {
@@ -302,16 +322,17 @@ const showRepBills = (location, query) => {
   })
 }
 
-const showSenateLatest = location => {
-  getLatestSenate().then(latest => {
-    location.appendChild(renderLatestSenate(latest))
+const showLatestBills = (location, chamber) => {
+  getLatestBills(chamber).then(latest => {
+    location.appendChild(renderLatestBills(latest))
   })
 }
 
 /*Initiates page*/
 
 $findRep.appendChild(renderSearch())
-$latestSenate.appendChild(showSenateLatest($latestSenate))
+$latestSenate.appendChild(showLatestBills($latestSenate, 'senate'))
+$latestHouse.appendChild(showLatestBills($latestHouse, 'house'))
 
 /* Event listeners*/
 const $searchButton = document.querySelector('#zip-search-button')

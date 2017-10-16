@@ -71,3 +71,8 @@
 .collection a.bill-listing {
   color: #212121;
 }
+
+.listing-details {
+  margin: 1rem 0;
+  line-height: 0.5rem;
+}

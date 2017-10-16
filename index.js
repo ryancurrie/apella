@@ -94,25 +94,10 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
     })
   })
 
-  app.get('/latest-bills-senate', (req, res) => {
+  app.get('/bills/:chamber/latest', ({ params: { chamber } }, res) => {
     superagent
       .get(
-        'https://api.propublica.org/congress/v1/115/senate/bills/introduced.json'
-      )
-      .set('x-api-key', process.env.PP_Key)
-      .then((resp, err) => {
-        if (err) {
-          return res.sendStatus(500)
-        } else {
-          res.status(200).send(resp.body.results[0].bills)
-        }
-      })
-  })
-
-  app.get('/latest-bills-house', (req, res) => {
-    superagent
-      .get(
-        'https://api.propublica.org/congress/v1/115/house/bills/introduced.json'
+        `https://api.propublica.org/congress/v1/115/${chamber}/bills/introduced.json`
       )
       .set('x-api-key', process.env.PP_Key)
       .then((resp, err) => {
