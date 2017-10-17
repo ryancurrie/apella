@@ -210,6 +210,7 @@ const renderRep = ({
 }) => {
   const $repCard = document.createElement('div')
   $repCard.classList.add('row')
+  $repCard.setAttribute('id', 'rep-card')
 
   const $card = document.createElement('div')
   $card.classList.add('card', 'horizontal', 'col', 'l6', 's12', 'offset-l3')
@@ -280,9 +281,19 @@ const renderRepBills = collection => {
     const $bill_slug = $replace.replace(/-115/, '')
     const $bill = document.createElement('a')
     $bill.classList.add('collection-item', 'bill-listing')
-    $bill.setAttribute('data-billId', $bill_slug)
+    $bill.setAttribute('data-billid', $bill_slug)
     $bill.setAttribute('href', '#')
     $bill.textContent = collection[prop].title
+    $bill.addEventListener('click', event => {
+      event.preventDefault()
+      if (event.target.tagName.toLowerCase() === 'a') {
+        const $id = event.target.dataset.billid
+
+        showBill($apella, $id)
+
+        $headerMsg.textContent = ''
+      }
+    })
 
     $listWrapper.appendChild($bill)
   }
@@ -294,18 +305,22 @@ const renderRepBills = collection => {
 
 const renderCampaignDetails = contributors => {
   const $topContributors = document.createElement('div')
-  $topContributors.classList.add('col', 's12', 'l6')
+  $topContributors.classList.add('row')
+  $topContributors.setAttribute('id', 'top-contributors')
+
+  const $listWrapper = document.createElement('div')
+  $listWrapper.classList.add('col', 's12', 'l6', 'offset-l3')
 
   const $header = document.createElement('h2')
   $header.classList.add('center', 'flow-text')
   $header.textContent = 'Top Campaign Contributors'
 
-  const $listWrapper = document.createElement('ul')
-  $listWrapper.classList.add('collection', 'col', 'l6', 's12')
-  $listWrapper.setAttribute('id', 'top-contributors')
+  const $list = document.createElement('ul')
+  $list.classList.add('collection')
 
-  $topContributors.appendChild($header)
   $topContributors.appendChild($listWrapper)
+  $listWrapper.appendChild($header)
+  $listWrapper.appendChild($list)
 
   contributors.forEach(contributor => {
     const $contributor = document.createElement('li')
@@ -319,7 +334,7 @@ const renderCampaignDetails = contributors => {
     )
 
     $contributor.appendChild($contribution)
-    $listWrapper.appendChild($contributor)
+    $list.appendChild($contributor)
   })
 
   return $topContributors
