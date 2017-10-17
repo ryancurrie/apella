@@ -69,7 +69,8 @@ const renderLatestBills = collection => {
 
     const $title = document.createElement('a')
     $title.textContent = collection[prop].title
-    $title.setAttribute('href', collection[prop].bill_id)
+    $title.setAttribute('href', '#')
+    $title.setAttribute('data-billId', collection[prop].bill_slug)
     $title.textContent = collection[prop].title
 
     const $details = document.createElement('div')
@@ -95,6 +96,8 @@ const renderLatestBills = collection => {
   }
   return $latestBills
 }
+
+const renderBill = collection => {}
 
 const renderReps = ({
   value: {
@@ -268,7 +271,8 @@ const renderRepBills = collection => {
   for (let prop in collection) {
     const $bill = document.createElement('a')
     $bill.classList.add('collection-item', 'bill-listing')
-    $bill.setAttribute('href', collection[prop].bill_id)
+    $bill.setAttribute('data-billId', collection[prop].bill_slug)
+    $bill.setAttribute('href', '#')
     $bill.textContent = collection[prop].title
 
     $listWrapper.appendChild($bill)
@@ -286,6 +290,10 @@ const getReps = query => {
 
 const getLatestBills = chamber => {
   return fetch(`/bills/${chamber}/latest`).then(results => results.json())
+}
+
+const getBill = billId => {
+  return fetch(`/bills/${billId}`).then(results => results.text())
 }
 
 const getRepById = id => {
@@ -310,6 +318,15 @@ const showReps = (location, query) => {
   })
 }
 
+const showBill = (location, query) => {
+  getBill(query).then(bill => {
+    const $bill = document.createElement('div')
+    $bill.innerHTML = bill
+    location.innerHTML = ''
+    location.appendChild($bill)
+  })
+}
+
 const showRepBills = (location, query) => {
   getRepById(query).then(rep => {
     location.innerHTML = ''
@@ -321,16 +338,18 @@ const showRepBills = (location, query) => {
   })
 }
 
-/*const showLatestBills = (location, chamber) => {
+const showLatestBills = (location, chamber) => {
   getLatestBills(chamber).then(latest => {
     location.appendChild(renderLatestBills(latest))
   })
-}*/
+}
 
 /*Initiates page*/
 
 $findRep.appendChild(renderSearch())
-$latestSenate.appendChild(renderLatestBills(getLatestBills('senate')))
+showLatestBills($latestSenate, 'senate')
+showLatestBills($latestHouse, 'house')
+
 /*$latestHouse.appendChild(showLatestBills($latestHouse, 'house'))*/
 
 /* Event listeners*/
