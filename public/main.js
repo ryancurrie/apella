@@ -293,7 +293,7 @@ const getLatestBills = chamber => {
 }
 
 const getBill = billId => {
-  return fetch(`/bills/${billId}`).then(results => results.text())
+  return fetch(`/bills/${billId}`).then(results => results.json())
 }
 
 const getRepById = id => {
@@ -319,9 +319,9 @@ const showReps = (location, query) => {
 }
 
 const showBill = (location, query) => {
-  getBill(query).then(bill => {
+  getBill(query).then(({ content, repId }) => {
     const $bill = document.createElement('div')
-    $bill.innerHTML = bill
+    $bill.innerHTML = content
 
     location.innerHTML = ''
     location.appendChild($bill)

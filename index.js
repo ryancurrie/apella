@@ -119,19 +119,27 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
           console.log(err)
           return res.sendStatus(500)
         } else {
-          return resp.body.results[0].congressdotgov_url
+          return {
+            url: resp.body.results[0].congressdotgov_url,
+            repId: resp.body.results[0].sponsor_id
+          }
         }
       })
-      .then((url, err) => {
+      .then(({ url, repId }, err) => {
         if (err) {
+          console.log(err)
           return res.sendStatus(500)
         } else {
           superagent.get(url + '/text').then((page, err) => {
             if (err) {
+              console.log(err)
               return res.sendStatus(500)
             } else {
               const $ = cheerio.load(page.text)
-              res.send($.html('.generated-html-container'))
+              res.send({
+                content: $.html('.generated-html-container'),
+                repId
+              })
             }
           })
         }
