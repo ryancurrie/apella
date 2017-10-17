@@ -322,6 +322,7 @@ const showBill = (location, query) => {
   getBill(query).then(bill => {
     const $bill = document.createElement('div')
     $bill.innerHTML = bill
+
     location.innerHTML = ''
     location.appendChild($bill)
   })
@@ -331,6 +332,7 @@ const showRepBills = (location, query) => {
   getRepById(query).then(rep => {
     location.innerHTML = ''
     location.appendChild(renderRep(rep))
+    body.app
   })
 
   getRepBills(query).then(bills => {

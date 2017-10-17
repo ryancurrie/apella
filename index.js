@@ -112,25 +112,30 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
 
   app.get('/bills/:billId', ({ params: { billId } }, res) => {
     superagent
-      .get(`https://www.govtrack.us/congress/bills/115/${billId}/text`)
-      .then((results, err) => {
+      .get(`https://api.propublica.org/congress/v1/115/bills/${billId}.json`)
+      .set('x-api-key', process.env.PP_Key)
+      .then((resp, err) => {
         if (err) {
+          console.log(err)
           return res.sendStatus(500)
         } else {
-          const $ = cheerio.load(results.text)
-
-          res.send($.html('article'))
+          return resp.body.results[0].congressdotgov_url
         }
       })
-    /*.then((html, err) => {
+      .then((url, err) => {
         if (err) {
           return res.sendStatus(500)
         } else {
-          const $div = cheerio.load(html)
-          const x = $div('.bill_text_content', '#main_text_content').html
-          res.send(x)
+          superagent.get(url + '/text').then((page, err) => {
+            if (err) {
+              return res.sendStatus(500)
+            } else {
+              const $ = cheerio.load(page.text)
+              res.send($.html('.generated-html-container'))
+            }
+          })
         }
-      })*/
+      })
   })
 
   app.listen(3000, () => {
