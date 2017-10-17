@@ -67,8 +67,19 @@ const renderLatestBills = collection => {
   $listWrapper.classList.add('collection', 'col', 's12')
 
   $latestBills.appendChild($listWrapper)
+  $latestBills.addEventListener('click', event => {
+    event.preventDefault()
+    if (event.target.tagName.toLowerCase() === 'a') {
+      const $id = event.target.dataset.billid
+
+      showBill($apella, $id)
+
+      $headerMsg.textContent = ''
+    }
+  })
 
   for (let prop in collection) {
+    if (collection[prop].content)
     const $bill = document.createElement('li')
     $bill.classList.add('collection-item', 'bill-listing')
 
