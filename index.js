@@ -146,6 +146,32 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
       })
   })
 
+  app.get('/rep/campaign/:repId', ({ params: { repId } }, res) => {
+    representatives
+      .findOne({ id: repId })
+      .then(doc => {
+        return doc.crp_id
+      })
+      .then((crpId, err) => {
+        if (err) {
+          return res.sendStatus(500)
+        } else {
+          superagent
+            .get(
+              `http://www.opensecrets.org/api/?method=candContrib&cid=${crpId}&output=json&apikey=${process
+                .env.OS_Key}`
+            )
+            .then((resp, err) => {
+              if (err) {
+                return res.sendStatus(500)
+              } else {
+                res.send(resp.text)
+              }
+            })
+        }
+      })
+  })
+
   app.listen(3000, () => {
     console.log('Listening on port 3000!')
   })
