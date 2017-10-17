@@ -79,7 +79,6 @@ const renderLatestBills = collection => {
   })
 
   for (let prop in collection) {
-    if (collection[prop].content)
     const $bill = document.createElement('li')
     $bill.classList.add('collection-item', 'bill-listing')
 
@@ -394,9 +393,15 @@ const showReps = (location, query) => {
 }
 
 const showBill = (location, query) => {
-  getBill(query).then(({ content, repId }) => {
+  getBill(query).then(({ content, repId, summary, title }) => {
     const $bill = document.createElement('div')
-    $bill.innerHTML = content
+    if (content.length > 0) {
+      $bill.innerHTML = content
+    } else if (summary.length > 0) {
+      $bill.innerHTML = `<h5 id="no-content-header" class="flow-text center">${title}</h5><p class="summary">${summary}</p>`
+    } else {
+      $bill.innerHTML = `<h5 id="no-content-header" class="flow-text center">${title}</h5><p>No text is available for this bill.</p>`
+    }
 
     location.innerHTML = ''
     location.appendChild($bill)
