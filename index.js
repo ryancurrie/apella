@@ -161,11 +161,14 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
               `http://www.opensecrets.org/api/?method=candContrib&cid=${crpId}&output=json&apikey=${process
                 .env.OS_Key}`
             )
+            .accept('json')
             .then((resp, err) => {
               if (err) {
                 return res.sendStatus(500)
               } else {
-                res.send(resp.text)
+                const $parsed = JSON.parse(resp.text)
+                const $contributors = $parsed.response.contributors.contributor
+                res.send($contributors)
               }
             })
         }

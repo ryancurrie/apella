@@ -4,6 +4,13 @@ const $findRep = document.querySelector('#find-rep')
 const $latestSenate = document.querySelector('#senate-latest')
 const $latestHouse = document.querySelector('#house-latest')
 
+/*Currency Fromatter */
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 0
+})
+
 const renderSearch = () => {
   const $form = document.createElement('div')
   $form.classList.add('col', 's12', 'l6', 'offset-l3', 'center')
@@ -283,6 +290,41 @@ const renderRepBills = collection => {
   return $billsByRep
 }
 
+/* For showing member campaign details */
+
+const renderCampaignDetails = contributors => {
+  const $topContributors = document.createElement('div')
+  $topContributors.classList.add('col', 's12', 'l6')
+
+  const $header = document.createElement('h2')
+  $header.classList.add('center', 'flow-text')
+  $header.textContent = 'Top Campaign Contributors'
+
+  const $listWrapper = document.createElement('ul')
+  $listWrapper.classList.add('collection', 'col', 'l6', 's12')
+  $listWrapper.setAttribute('id', 'top-contributors')
+
+  $topContributors.appendChild($header)
+  $topContributors.appendChild($listWrapper)
+
+  contributors.forEach(contributor => {
+    const $contributor = document.createElement('li')
+    $contributor.classList.add('collection-item')
+    $contributor.textContent = contributor['@attributes'].org_name
+
+    const $contribution = document.createElement('span')
+    $contribution.classList.add('right')
+    $contribution.textContent = formatter.format(
+      contributor['@attributes'].total
+    )
+
+    $contributor.appendChild($contribution)
+    $listWrapper.appendChild($contributor)
+  })
+
+  return $topContributors
+}
+
 /*Fetch Functions*/
 
 const getReps = query => {
@@ -305,6 +347,11 @@ const getRepById = id => {
 
 const getRepBills = id => {
   const url = `/rep/${id}/bills`
+  return fetch(url).then(results => results.json())
+}
+
+const getRepCampaign = id => {
+  const url = `/rep/campaign/${id}`
   return fetch(url).then(results => results.json())
 }
 
