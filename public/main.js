@@ -269,9 +269,11 @@ const renderRepBills = collection => {
   $billsByRep.appendChild($listWrapper)
 
   for (let prop in collection) {
+    const $replace = collection[prop].bill_id
+    const $bill_slug = $replace.replace(/-115/, '')
     const $bill = document.createElement('a')
     $bill.classList.add('collection-item', 'bill-listing')
-    $bill.setAttribute('data-billId', collection[prop].bill_slug)
+    $bill.setAttribute('data-billId', $bill_slug)
     $bill.setAttribute('href', '#')
     $bill.textContent = collection[prop].title
 
@@ -332,7 +334,6 @@ const showRepBills = (location, query) => {
   getRepById(query).then(rep => {
     location.innerHTML = ''
     location.appendChild(renderRep(rep))
-    body.app
   })
 
   getRepBills(query).then(bills => {
