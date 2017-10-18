@@ -247,6 +247,7 @@ const renderRep = ({
   photoUrl,
   short_title,
   contact_form,
+  state,
   phone,
   office
 }) => {
@@ -273,7 +274,7 @@ const renderRep = ({
   $chamber.textContent = chamber
 
   const $repName = document.createElement('p')
-  $repName.textContent = `${short_title} ${first_name} ${last_name} (${party})`
+  $repName.textContent = `${short_title} ${first_name} ${last_name} (${party}), ${state}`
 
   const $office = document.createElement('p')
   $office.textContent = `${office}`
@@ -288,7 +289,11 @@ const renderRep = ({
 
   const $contact = document.createElement('a')
   $contact.textContent = 'Email'
-  $contact.setAttribute('href', `${contact_form}`)
+  if (contact_form) {
+    $contact.setAttribute('href', `${contact_form}`)
+  } else {
+    $contact.setAttribute('href', '#')
+  }
 
   $repCard.appendChild($card)
   $card.appendChild($imgDiv)
