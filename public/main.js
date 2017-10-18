@@ -11,6 +11,38 @@ const formatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 0
 })
 
+/*Fetch Functions*/
+
+const getReps = query => {
+  const url = `/get-reps/${query}`
+  return fetch(url).then(results => results.json())
+}
+
+const getLatestBills = chamber => {
+  return fetch(`/bills/${chamber}/latest`).then(results => results.json())
+}
+
+const getBill = billId => {
+  return fetch(`/bills/${billId}`).then(results => results.json())
+}
+
+const getRepById = id => {
+  const url = `/rep/${id}`
+  return fetch(url).then(results => results.json())
+}
+
+const getRepBills = id => {
+  const url = `/rep/${id}/bills`
+  return fetch(url).then(results => results.json())
+}
+
+const getRepCampaign = id => {
+  const url = `/rep/campaign/${id}`
+  return fetch(url).then(results => results.json())
+}
+
+/* Render Functions */
+
 const renderSearch = () => {
   const $form = document.createElement('div')
   $form.classList.add('col', 's12', 'l6', 'offset-l3', 'center')
@@ -70,11 +102,12 @@ const renderLatestBills = collection => {
   $latestBills.addEventListener('click', event => {
     event.preventDefault()
     if (event.target.tagName.toLowerCase() === 'a') {
-      const $id = event.target.dataset.billid
+      const $billId = event.target.dataset.billid
+      const $repId = event.target.dataset.repid
 
-      showBill($apella, $id)
+      showBill($apella, $billId, $repId)
 
-      $headerMsg.textContent = ''
+      $headerMsg.textContent = 'Bill ' + $billId.toUpperCase()
     }
   })
 
@@ -87,7 +120,8 @@ const renderLatestBills = collection => {
     const $title = document.createElement('a')
     $title.textContent = collection[prop].title
     $title.setAttribute('href', '#')
-    $title.setAttribute('data-billId', collection[prop].bill_slug)
+    $title.setAttribute('data-billid', collection[prop].bill_slug)
+    $title.setAttribute('data-repid', collection[prop].sponsor_id)
     $title.textContent = collection[prop].title
 
     const $details = document.createElement('div')
@@ -113,8 +147,6 @@ const renderLatestBills = collection => {
   }
   return $latestBills
 }
-
-const renderBill = collection => {}
 
 const renderReps = ({
   value: {
@@ -274,8 +306,6 @@ const renderRep = ({
   return $repCard
 }
 
-/*For showing bills by member*/
-
 const renderRepBills = collection => {
   const $billsByRep = document.createElement('div')
   $billsByRep.classList.add('row')
@@ -292,16 +322,18 @@ const renderRepBills = collection => {
     const $bill = document.createElement('a')
     $bill.classList.add('collection-item', 'bill-listing')
     $bill.setAttribute('data-billid', $bill_slug)
+    $bill.setAttribute('data-repid', collection[prop].sponsor_id)
     $bill.setAttribute('href', '#')
     $bill.textContent = collection[prop].title
     $bill.addEventListener('click', event => {
       event.preventDefault()
       if (event.target.tagName.toLowerCase() === 'a') {
-        const $id = event.target.dataset.billid
+        const $billId = event.target.dataset.billid
+        const $repId = event.target.dataset.repid
 
-        showBill($apella, $id)
+        showBill($apella, $billId, $repId)
 
-        $headerMsg.textContent = ''
+        $headerMsg.textContent = 'Bill ' + $billId.toUpperCase()
       }
     })
 
@@ -310,8 +342,6 @@ const renderRepBills = collection => {
 
   return $billsByRep
 }
-
-/* For showing member campaign details */
 
 const renderCampaignDetails = contributors => {
   const $topContributors = document.createElement('div')
@@ -350,34 +380,17 @@ const renderCampaignDetails = contributors => {
   return $topContributors
 }
 
-/*Fetch Functions*/
+const renderBill = ({ content, repId, summary, title }) => {
+  const $bill = document.createElement('div')
+  if (content.length > 0) {
+    $bill.innerHTML = content
+  } else if (summary.length > 0) {
+    $bill.innerHTML = `<h5 id="no-content-header" class="flow-text center">${title}</h5><p class="summary">${summary}</p>`
+  } else {
+    $bill.innerHTML = `<h5 id="no-content-header" class="flow-text center">${title}</h5><p>No text is available for this bill.</p>`
+  }
 
-const getReps = query => {
-  const url = `/get-reps/${query}`
-  return fetch(url).then(results => results.json())
-}
-
-const getLatestBills = chamber => {
-  return fetch(`/bills/${chamber}/latest`).then(results => results.json())
-}
-
-const getBill = billId => {
-  return fetch(`/bills/${billId}`).then(results => results.json())
-}
-
-const getRepById = id => {
-  const url = `/rep/${id}`
-  return fetch(url).then(results => results.json())
-}
-
-const getRepBills = id => {
-  const url = `/rep/${id}/bills`
-  return fetch(url).then(results => results.json())
-}
-
-const getRepCampaign = id => {
-  const url = `/rep/campaign/${id}`
-  return fetch(url).then(results => results.json())
+  return $bill
 }
 
 /*Show Functions */
@@ -389,22 +402,6 @@ const showReps = (location, query) => {
     reps
       .map(rep => renderReps(rep))
       .forEach($repCard => location.appendChild($repCard))
-  })
-}
-
-const showBill = (location, query) => {
-  getBill(query).then(({ content, repId, summary, title }) => {
-    const $bill = document.createElement('div')
-    if (content.length > 0) {
-      $bill.innerHTML = content
-    } else if (summary.length > 0) {
-      $bill.innerHTML = `<h5 id="no-content-header" class="flow-text center">${title}</h5><p class="summary">${summary}</p>`
-    } else {
-      $bill.innerHTML = `<h5 id="no-content-header" class="flow-text center">${title}</h5><p>No text is available for this bill.</p>`
-    }
-
-    location.innerHTML = ''
-    location.appendChild($bill)
   })
 }
 
@@ -423,6 +420,24 @@ const showLatestBills = (location, chamber) => {
   getLatestBills(chamber).then(latest => {
     location.appendChild(renderLatestBills(latest))
   })
+}
+
+const showBill = (location, billId, repId) => {
+  getRepById(repId)
+    .then(rep => {
+      location.innerHTML = ''
+      location.appendChild(renderRep(rep))
+    })
+    .then(() => {
+      getRepCampaign(repId).then(details => {
+        location.appendChild(renderCampaignDetails(details))
+      })
+    })
+    .then(() => {
+      getBill(billId).then(bill => {
+        location.appendChild(renderBill(bill))
+      })
+    })
 }
 
 /*Initiates page*/
