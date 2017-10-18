@@ -1,8 +1,5 @@
 const $headerMsg = document.querySelector('#header-msg')
 const $apella = document.querySelector('#apella')
-const $findRep = document.querySelector('#find-rep')
-const $latestSenate = document.querySelector('#senate-latest')
-const $latestHouse = document.querySelector('#house-latest')
 
 /*Currency Fromatter */
 const formatter = new Intl.NumberFormat('en-US', {
@@ -42,6 +39,43 @@ const getRepCampaign = id => {
 }
 
 /* Render Functions */
+
+const renderHome = () => {
+  const $home = document.createElement('div')
+
+  const $findRep = document.createElement('div')
+  $findRep.classList.add('row')
+  $findRep.setAttribute('id', 'find-rep')
+
+  const $latestBills = document.createElement('div')
+  $latestBills.classList.add('row')
+  $latestBills.setAttribute('id', 'latest-bills')
+
+  const $latestSenate = document.createElement('div')
+  $latestSenate.classList.add('col', 's12', 'l6')
+  $latestSenate.setAttribute('id', 'latest-senate')
+
+  const $senateHeader = document.createElement('h2')
+  $senateHeader.classList.add('center', 'flow-text')
+  $senateHeader.textContent = 'Recently Introduced Senate Bills'
+
+  const $latestHouse = document.createElement('div')
+  $latestHouse.classList.add('col', 's12', 'l6')
+  $latestHouse.setAttribute('id', 'latest-house')
+
+  const $houseHeader = document.createElement('h2')
+  $houseHeader.classList.add('center', 'flow-text')
+  $houseHeader.textContent = 'Recently Introduced House Bills'
+
+  $home.appendChild($findRep)
+  $home.appendChild($latestBills)
+  $latestBills.appendChild($latestSenate)
+  $latestBills.appendChild($latestHouse)
+  $latestSenate.appendChild($senateHeader)
+  $latestHouse.appendChild($houseHeader)
+
+  return $home
+}
 
 const renderSearch = () => {
   const $form = document.createElement('div')
@@ -104,6 +138,12 @@ const renderLatestBills = collection => {
     if (event.target.tagName.toLowerCase() === 'a') {
       const $billId = event.target.dataset.billid
       const $repId = event.target.dataset.repid
+
+      history.pushState(null, null, $billId)
+
+      document
+        .querySelector('link[rel="canonical"]')
+        .setAttribute('href', location.href)
 
       showBill($apella, $billId, $repId)
 
@@ -665,6 +705,11 @@ const showBill = (location, billId, repId) => {
 }
 
 /*Initiates page*/
+$apella.appendChild(renderHome())
+
+const $findRep = document.querySelector('#find-rep')
+const $latestSenate = document.querySelector('#latest-senate')
+const $latestHouse = document.querySelector('#latest-house')
 
 $findRep.appendChild(renderSearch())
 showLatestBills($latestSenate, 'senate')
@@ -673,6 +718,24 @@ showLatestBills($latestHouse, 'house')
 /*$latestHouse.appendChild(showLatestBills($latestHouse, 'house'))*/
 
 /* Event listeners*/
+window.addEventListener('popstate', function() {
+  console.log('fired')
+  console.log(location.href)
+  if (location.href === 'http://localhost:3000/') {
+    $headerMsg.innerHTML = ''
+    $apella.innerHTML = ''
+    $apella.appendChild(renderHome())
+
+    const $findRep = document.querySelector('#find-rep')
+    const $latestSenate = document.querySelector('#latest-senate')
+    const $latestHouse = document.querySelector('#latest-house')
+
+    $findRep.appendChild(renderSearch())
+    showLatestBills($latestSenate, 'senate')
+    showLatestBills($latestHouse, 'house')
+  }
+})
+
 const $searchButton = document.querySelector('#zip-search-button')
 
 $searchButton.addEventListener('click', event => {
