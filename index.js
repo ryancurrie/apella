@@ -90,7 +90,14 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
       if (err) {
         return res.sendStatus(500)
       } else {
-        res.status(200).json(resp)
+        if (resp.photoUrl) {
+          res.status(200).json(resp)
+        } else {
+          const $photo = Object.assign(resp, {
+            photoUrl: `https://theunitedstates.io/images/congress/225x275/${repId}.jpg`
+          })
+          res.status(200).json($photo)
+        }
       }
     })
   })
