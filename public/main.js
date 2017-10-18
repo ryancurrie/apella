@@ -423,21 +423,32 @@ const showLatestBills = (location, chamber) => {
 }
 
 const showBill = (location, billId, repId) => {
-  getRepById(repId)
-    .then(rep => {
-      location.innerHTML = ''
-      location.appendChild(renderRep(rep))
-    })
-    .then(() => {
-      getRepCampaign(repId).then(details => {
-        location.appendChild(renderCampaignDetails(details))
-      })
-    })
-    .then(() => {
-      getBill(billId).then(bill => {
-        location.appendChild(renderBill(bill))
-      })
-    })
+  const $topRow = document.createElement('div')
+  $topRow.classList.add('row')
+
+  const $repDiv = document.createElement('div')
+  const $conDiv = document.createElement('div')
+
+  const $botRow = document.createElement('div')
+  $botRow.classList.add('row')
+
+  getRepById(repId).then(rep => {
+    $repDiv.appendChild(renderRep(rep))
+  })
+
+  getRepCampaign(repId).then(details => {
+    $conDiv.appendChild(renderCampaignDetails(details))
+  })
+
+  getBill(billId).then(bill => {
+    $botRow.appendChild(renderBill(bill))
+  })
+
+  location.innerHTML = ''
+  location.appendChild($topRow)
+  $topRow.appendChild($repDiv)
+  $topRow.appendChild($conDiv)
+  location.appendChild($botRow)
 }
 
 /*Initiates page*/
