@@ -159,6 +159,7 @@ const renderReps = ({
     short_title,
     contact_form,
     phone,
+    state,
     office
   }
 }) => {
@@ -184,7 +185,7 @@ const renderReps = ({
   $chamber.textContent = chamber
 
   const $repName = document.createElement('p')
-  $repName.textContent = `${short_title} ${first_name} ${last_name} (${party})`
+  $repName.textContent = `${short_title} ${first_name} ${last_name} (${party}) - ${state}`
 
   const $office = document.createElement('p')
   $office.textContent = `${office}`
@@ -274,7 +275,7 @@ const renderRep = ({
   $chamber.textContent = chamber
 
   const $repName = document.createElement('p')
-  $repName.textContent = `${short_title} ${first_name} ${last_name} (${party}), ${state}`
+  $repName.textContent = `${short_title} ${first_name} ${last_name} (${party}) - ${state}`
 
   const $office = document.createElement('p')
   $office.textContent = `${office}`
@@ -328,7 +329,7 @@ const renderRepBills = collection => {
     $bill.classList.add('collection-item', 'bill-listing')
     $bill.setAttribute('data-billid', $bill_slug)
     $bill.setAttribute('data-repid', collection[prop].sponsor_id)
-    $bill.setAttribute('href', '#')
+    $bill.setAttribute('href', `#${$bill_slug}`)
     $bill.textContent = collection[prop].title
     $bill.addEventListener('click', event => {
       event.preventDefault()
