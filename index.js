@@ -112,7 +112,7 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
         if (err) {
           return res.sendStatus(500)
         } else {
-          res.status(200).send(resp.body.results[0].bills)
+          res.status(200).send(resp.body.results)
         }
       })
   })
@@ -130,31 +130,59 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
             url: resp.body.results[0].congressdotgov_url,
             repId: resp.body.results[0].sponsor_id,
             summary: resp.body.results[0].summary,
-            title: resp.body.results[0].title
+            title: resp.body.results[0].title,
+            house_passage: resp.body.results[0].house_passage,
+            senate_passage: resp.body.results[0].senate_passage,
+            enacted: resp.body.results[0].enacted,
+            active: resp.body.results[0].active,
+            primary_subject: resp.body.results[0].primary_subject,
+            introduced_date: resp.body.results[0].introduced_date
           }
         }
       })
-      .then(({ url, repId, summary, title }, err) => {
-        if (err) {
-          console.log(err)
-          return res.sendStatus(500)
-        } else {
-          superagent.get(url + '/text').then((page, err) => {
-            if (err) {
-              console.log(err)
-              return res.sendStatus(500)
-            } else {
-              const $ = cheerio.load(page.text)
-              res.send({
-                content: $.html('.generated-html-container'),
-                repId,
-                summary,
-                title
-              })
-            }
-          })
+      .then(
+        (
+          {
+            url,
+            repId,
+            summary,
+            title,
+            house_passage,
+            senate_passage,
+            enacted,
+            active,
+            primary_subject,
+            introduced_date
+          },
+          err
+        ) => {
+          if (err) {
+            console.log(err)
+            return res.sendStatus(500)
+          } else {
+            superagent.get(url + '/text').then((page, err) => {
+              if (err) {
+                console.log(err)
+                return res.sendStatus(500)
+              } else {
+                const $ = cheerio.load(page.text)
+                res.send({
+                  content: $.html('.generated-html-container'),
+                  repId,
+                  summary,
+                  title,
+                  house_passage,
+                  senate_passage,
+                  enacted,
+                  active,
+                  primary_subject,
+                  introduced_date
+                })
+              }
+            })
+          }
         }
-      })
+      )
   })
 
   app.get('/rep/campaign/:repId', ({ params: { repId } }, res) => {
