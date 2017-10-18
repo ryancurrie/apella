@@ -112,7 +112,7 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
         if (err) {
           return res.sendStatus(500)
         } else {
-          res.status(200).send(resp.body.results)
+          res.status(200).send(resp.body.results[0].bills)
         }
       })
   })
