@@ -1,5 +1,6 @@
 const $headerMsg = document.querySelector('#header-msg')
 const $apella = document.querySelector('#apella')
+const $genius = document.querySelector('#genius')
 
 /*Currency Fromatter */
 const formatter = new Intl.NumberFormat('en-US', {
@@ -144,6 +145,11 @@ const renderLatestBills = collection => {
       document
         .querySelector('link[rel="canonical"]')
         .setAttribute('href', location.href)
+
+      const $geniusScript = document.createElement('script')
+      $geniusScript.setAttribute('async', '')
+      $geniusScript.setAttribute('src', '//genius.codes')
+      $genius.append($geniusScript)
 
       showBill($apella, $billId, $repId)
 
@@ -705,6 +711,7 @@ const showBill = (location, billId, repId) => {
 }
 
 /*Initiates page*/
+
 $apella.appendChild(renderHome())
 
 const $findRep = document.querySelector('#find-rep')
@@ -723,6 +730,7 @@ window.addEventListener('popstate', function() {
   console.log(location.href)
   if (location.href === 'http://localhost:3000/') {
     $headerMsg.innerHTML = ''
+    document.querySelector('#genius_back_page').innerHTML = ''
     $apella.innerHTML = ''
     $apella.appendChild(renderHome())
 
