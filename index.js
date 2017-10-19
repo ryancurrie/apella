@@ -128,7 +128,6 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
       .set('x-api-key', process.env.PP_Key)
       .then((resp, err) => {
         if (err) {
-          console.log(err)
           return res.sendStatus(500)
         } else {
           return {
@@ -225,7 +224,6 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
       .set('x-api-key', process.env.PP_Key)
       .then((resp, err) => {
         if (err) {
-          console.log(err)
           return res.sendStatus(500)
         } else {
           return {

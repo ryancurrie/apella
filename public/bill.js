@@ -22,7 +22,7 @@ const getRepCampaign = id => {
   return fetch(url).then(results => results.json())
 }
 
-const renderRepBillView = ({
+const renderBillRep = ({
   chamber,
   id,
   first_name,
@@ -137,13 +137,19 @@ const renderCampaignDetails = contributors => {
 
 const renderBill = ({ content, repId, summary, title }) => {
   const $bill = document.createElement('div')
+  const $summaryDiv = document.createElement('div')
+  const $billContent = document.createElement('div')
+
   if (content.length > 0) {
-    $bill.innerHTML = content
+    $billContent.innerHTML = `<h5 id="no-content-header" class="flow-text center">${title}</h5><p class="summary">${summary}</p>${content}`
   } else if (summary.length > 0) {
     $bill.innerHTML = `<h5 id="no-content-header" class="flow-text center">${title}</h5><p class="summary">${summary}</p>`
   } else {
     $bill.innerHTML = `<h5 id="no-content-header" class="flow-text center">${title}</h5><p>No text is available for this bill.</p>`
   }
+
+  $bill.appendChild($summaryDiv)
+  $bill.appendChild($billContent)
 
   return $bill
 }
@@ -286,7 +292,7 @@ const showBill = (billId, repId) => {
   $botRow.classList.add('row')
 
   getRepById(repId).then(rep => {
-    $repRow.appendChild(renderRepBillView(rep))
+    $repRow.appendChild(renderBillRep(rep))
   })
 
   getRepCampaign(repId).then(details => {
