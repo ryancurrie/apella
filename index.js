@@ -21,6 +21,10 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
 
   app.use(staticMiddleware)
 
+  app.get('/', (req, res) => {
+    res.render('index')
+  })
+
   app.get('/get-reps/:zip', ({ params: { zip } }, res) => {
     superagent
       .get('https://www.googleapis.com/civicinfo/v2/representatives')
@@ -215,8 +219,8 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
       })
   })
 
-  app.get('/bill/:billId', ({ params: { billId } }, res) => {
-    res.render('bill', { billId: billId })
+  app.get('/bill', ({ params: { billId } }, res) => {
+    res.render('bill')
   })
 
   app.listen(3000, () => {
