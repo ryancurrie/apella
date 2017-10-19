@@ -135,9 +135,7 @@ const renderLatestBills = collection => {
 
     const $title = document.createElement('a')
     $title.textContent = collection[prop].title
-    $title.setAttribute('href', '#')
-    $title.setAttribute('data-billid', collection[prop].bill_slug)
-    $title.setAttribute('data-repid', collection[prop].sponsor_id)
+    $title.setAttribute('href', '/bill/' + collection[prop].bill_slug)
     $title.textContent = collection[prop].title
 
     const $details = document.createElement('div')
@@ -343,21 +341,8 @@ const renderRepBills = collection => {
     const $bill_slug = $replace.replace(/-115/, '')
     const $bill = document.createElement('a')
     $bill.classList.add('collection-item', 'bill-listing')
-    $bill.setAttribute('data-billid', $bill_slug)
-    $bill.setAttribute('data-repid', collection[prop].sponsor_id)
-    $bill.setAttribute('href', `#${$bill_slug}`)
+    $bill.setAttribute('href', `bill/${$bill_slug}`)
     $bill.textContent = collection[prop].title
-    $bill.addEventListener('click', event => {
-      event.preventDefault()
-      if (event.target.tagName.toLowerCase() === 'a') {
-        const $billId = event.target.dataset.billid
-        const $repId = event.target.dataset.repid
-
-        showBill($apella, $billId, $repId)
-
-        $headerMsg.textContent = 'Bill ' + $billId.toUpperCase()
-      }
-    })
 
     $listWrapper.appendChild($bill)
   }
