@@ -14,6 +14,7 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
   const representatives = db.collection('representatives')
 
   const app = express()
+  app.set('view engine', 'pug')
 
   const publicPath = path.join(__dirname, 'public')
   const staticMiddleware = express.static(publicPath)
@@ -212,6 +213,10 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
             })
         }
       })
+  })
+
+  app.get('/bill/:billId', ({ params: { billId } }, res) => {
+    res.render('bill', { billId: billId })
   })
 
   app.listen(3000, () => {

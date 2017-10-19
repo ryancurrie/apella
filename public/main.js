@@ -730,7 +730,6 @@ window.addEventListener('popstate', function() {
   console.log(location.href)
   if (location.href === 'http://localhost:3000/') {
     $headerMsg.innerHTML = ''
-    document.querySelector('#genius_back_page').innerHTML = ''
     $apella.innerHTML = ''
     $apella.appendChild(renderHome())
 
