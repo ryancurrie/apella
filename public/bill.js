@@ -1,6 +1,17 @@
 const $headerMsg = document.querySelector('#header-msg')
 const $apella = document.querySelector('#apella')
 
+/*Currency Fromatter */
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 0
+})
+
+const getBill = billId => {
+  return fetch(`/bills/${billId}`).then(results => results.json())
+}
+
 const getRepById = id => {
   const url = `/rep/${id}`
   return fetch(url).then(results => results.json())
@@ -9,10 +20,6 @@ const getRepById = id => {
 const getRepCampaign = id => {
   const url = `/rep/campaign/${id}`
   return fetch(url).then(results => results.json())
-}
-
-const getBill = billId => {
-  return fetch(`/bills/${billId}`).then(results => results.json())
 }
 
 const renderRepBillView = ({
