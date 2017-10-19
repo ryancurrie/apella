@@ -1,6 +1,11 @@
+doctype html
 html
   include head.pug
-  include body.pug
-  include scripts.pug
-  script(src='//genius.codes')
+  
+  body
+    include body.pug
+    include scripts.pug
+    script(src='../bill.js')
+    script(src='//genius.codes')
+    script showBill('#{bill}', '#{rep}')
   

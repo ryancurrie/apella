@@ -1,6 +1,5 @@
 const $headerMsg = document.querySelector('#header-msg')
 const $apella = document.querySelector('#apella')
-const $genius = document.querySelector('#genius')
 
 /*Currency Fromatter */
 const formatter = new Intl.NumberFormat('en-US', {
@@ -134,28 +133,6 @@ const renderLatestBills = collection => {
   $listWrapper.classList.add('collection', 'col', 's12')
 
   $latestBills.appendChild($listWrapper)
-  $latestBills.addEventListener('click', event => {
-    event.preventDefault()
-    if (event.target.tagName.toLowerCase() === 'a') {
-      const $billId = event.target.dataset.billid
-      const $repId = event.target.dataset.repid
-
-      history.pushState(null, null, $billId)
-
-      document
-        .querySelector('link[rel="canonical"]')
-        .setAttribute('href', location.href)
-
-      const $geniusScript = document.createElement('script')
-      $geniusScript.setAttribute('async', '')
-      $geniusScript.setAttribute('src', '//genius.codes')
-      $genius.append($geniusScript)
-
-      showBill($apella, $billId, $repId)
-
-      $headerMsg.textContent = 'Bill ' + $billId.toUpperCase()
-    }
-  })
 
   for (let prop in collection) {
     const $bill = document.createElement('li')
@@ -667,7 +644,7 @@ const showLatestBills = (location, chamber) => {
   })
 }
 
-const showBill = (location, billId, repId) => {
+const showBill = (billId, repId) => {
   const $topRow = document.createElement('div')
   $topRow.classList.add('row')
 
@@ -700,14 +677,14 @@ const showBill = (location, billId, repId) => {
     $detailsDiv.appendChild(renderBillDetails(bill))
   })
 
-  location.innerHTML = ''
-  location.appendChild($topRow)
+  $apella.innerHTML = ''
+  $apella.appendChild($topRow)
   $topRow.appendChild($repDiv)
   $repDiv.appendChild($repRow)
   $repDiv.appendChild($detailsRow)
   $detailsRow.appendChild($detailsDiv)
   $topRow.appendChild($conDiv)
-  location.appendChild($botRow)
+  $apella.appendChild($botRow)
 }
 
 /*Initiates page*/
@@ -725,24 +702,6 @@ showLatestBills($latestHouse, 'house')
 /*$latestHouse.appendChild(showLatestBills($latestHouse, 'house'))*/
 
 /* Event listeners*/
-window.addEventListener('popstate', function() {
-  console.log('fired')
-  console.log(location.href)
-  if (location.href === 'http://localhost:3000/') {
-    $headerMsg.innerHTML = ''
-    $apella.innerHTML = ''
-    $apella.appendChild(renderHome())
-
-    const $findRep = document.querySelector('#find-rep')
-    const $latestSenate = document.querySelector('#latest-senate')
-    const $latestHouse = document.querySelector('#latest-house')
-
-    $findRep.appendChild(renderSearch())
-    showLatestBills($latestSenate, 'senate')
-    showLatestBills($latestHouse, 'house')
-  }
-})
-
 const $searchButton = document.querySelector('#zip-search-button')
 
 $searchButton.addEventListener('click', event => {

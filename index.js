@@ -19,11 +19,11 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
   const publicPath = path.join(__dirname, 'public')
   const staticMiddleware = express.static(publicPath)
 
-  app.use(staticMiddleware)
-
   app.get('/', (req, res) => {
     res.render('index')
   })
+
+  app.use(staticMiddleware)
 
   app.get('/get-reps/:zip', ({ params: { zip } }, res) => {
     superagent
@@ -219,8 +219,33 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
       })
   })
 
-  app.get('/bill', ({ params: { billId } }, res) => {
-    res.render('bill')
+  app.get('/bill/:billId', ({ params: { billId }, path }, res) => {
+    superagent
+      .get(`https://api.propublica.org/congress/v1/115/bills/${billId}.json`)
+      .set('x-api-key', process.env.PP_Key)
+      .then((resp, err) => {
+        if (err) {
+          console.log(err)
+          return res.sendStatus(500)
+        } else {
+          return {
+            rep: resp.body.results[0].sponsor_id,
+            bill: billId,
+            path: path
+          }
+        }
+      })
+      .then((resp, err) => {
+        if (err) {
+          return res.sendStatus(404)
+        } else {
+          res.render('bill', {
+            bill: resp.bill,
+            rep: resp.rep,
+            path: resp.path
+          })
+        }
+      })
   })
 
   app.listen(3000, () => {
