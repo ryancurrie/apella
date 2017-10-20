@@ -90,7 +90,14 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
       if (err) {
         return res.sendStatus(500)
       } else {
-        res.status(200).json(resp)
+        if (resp.photoUrl) {
+          res.status(200).json(resp)
+        } else {
+          const $photo = Object.assign(resp, {
+            photoUrl: `https://theunitedstates.io/images/congress/225x275/${repId}.jpg`
+          })
+          res.status(200).json($photo)
+        }
       }
     })
   })
@@ -121,27 +128,88 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
         } else {
           return {
             url: resp.body.results[0].congressdotgov_url,
-            repId: resp.body.results[0].sponsor_id
+            repId: resp.body.results[0].sponsor_id,
+            summary: resp.body.results[0].summary,
+            title: resp.body.results[0].title,
+            house_passage: resp.body.results[0].house_passage,
+            senate_passage: resp.body.results[0].senate_passage,
+            enacted: resp.body.results[0].enacted,
+            active: resp.body.results[0].active,
+            primary_subject: resp.body.results[0].primary_subject,
+            introduced_date: resp.body.results[0].introduced_date
           }
         }
       })
-      .then(({ url, repId }, err) => {
+      .then(
+        (
+          {
+            url,
+            repId,
+            summary,
+            title,
+            house_passage,
+            senate_passage,
+            enacted,
+            active,
+            primary_subject,
+            introduced_date
+          },
+          err
+        ) => {
+          if (err) {
+            console.log(err)
+            return res.sendStatus(500)
+          } else {
+            superagent.get(url + '/text').then((page, err) => {
+              if (err) {
+                console.log(err)
+                return res.sendStatus(500)
+              } else {
+                const $ = cheerio.load(page.text)
+                res.send({
+                  content: $.html('.generated-html-container'),
+                  repId,
+                  summary,
+                  title,
+                  house_passage,
+                  senate_passage,
+                  enacted,
+                  active,
+                  primary_subject,
+                  introduced_date
+                })
+              }
+            })
+          }
+        }
+      )
+  })
+
+  app.get('/rep/campaign/:repId', ({ params: { repId } }, res) => {
+    representatives
+      .findOne({ id: repId })
+      .then(doc => {
+        return doc.crp_id
+      })
+      .then((crpId, err) => {
         if (err) {
-          console.log(err)
           return res.sendStatus(500)
         } else {
-          superagent.get(url + '/text').then((page, err) => {
-            if (err) {
-              console.log(err)
-              return res.sendStatus(500)
-            } else {
-              const $ = cheerio.load(page.text)
-              res.send({
-                content: $.html('.generated-html-container'),
-                repId
-              })
-            }
-          })
+          superagent
+            .get(
+              `http://www.opensecrets.org/api/?method=candContrib&cid=${crpId}&output=json&apikey=${process
+                .env.OS_Key}`
+            )
+            .accept('json')
+            .then((resp, err) => {
+              if (err) {
+                return res.sendStatus(500)
+              } else {
+                const $parsed = JSON.parse(resp.text)
+                const $contributors = $parsed.response.contributors.contributor
+                res.send($contributors)
+              }
+            })
         }
       })
   })
