@@ -5,6 +5,7 @@ const { MongoClient } = require('mongodb')
 const superagent = require('superagent')
 const jsonParser = require('body-parser').json()
 const { updatePhone } = require('./phone.js')
+const cheerio = require('cheerio')
 
 MongoClient.connect('mongodb://localhost/apella', (err, db) => {
   if (err) {
@@ -92,6 +93,57 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
         res.status(200).json(resp)
       }
     })
+  })
+
+  app.get('/bills/:chamber/latest', ({ params: { chamber } }, res) => {
+    superagent
+      .get(
+        `https://api.propublica.org/congress/v1/115/${chamber}/bills/introduced.json`
+      )
+      .set('x-api-key', process.env.PP_Key)
+      .then((resp, err) => {
+        if (err) {
+          return res.sendStatus(500)
+        } else {
+          res.status(200).send(resp.body.results[0].bills)
+        }
+      })
+  })
+
+  app.get('/bills/:billId', ({ params: { billId } }, res) => {
+    superagent
+      .get(`https://api.propublica.org/congress/v1/115/bills/${billId}.json`)
+      .set('x-api-key', process.env.PP_Key)
+      .then((resp, err) => {
+        if (err) {
+          console.log(err)
+          return res.sendStatus(500)
+        } else {
+          return {
+            url: resp.body.results[0].congressdotgov_url,
+            repId: resp.body.results[0].sponsor_id
+          }
+        }
+      })
+      .then(({ url, repId }, err) => {
+        if (err) {
+          console.log(err)
+          return res.sendStatus(500)
+        } else {
+          superagent.get(url + '/text').then((page, err) => {
+            if (err) {
+              console.log(err)
+              return res.sendStatus(500)
+            } else {
+              const $ = cheerio.load(page.text)
+              res.send({
+                content: $.html('.generated-html-container'),
+                repId
+              })
+            }
+          })
+        }
+      })
   })
 
   app.listen(3000, () => {
