@@ -140,7 +140,7 @@ MongoClient.connect(dbUrl, (err, db) => {
           return res.sendStatus(500)
         } else {
           return {
-            url: resp.body.results[0].congressdotgov_url,
+            url: resp.body.results[0].govtrack_url,
             repId: resp.body.results[0].sponsor_id,
             summary: resp.body.results[0].summary,
             title: resp.body.results[0].title,
@@ -180,7 +180,7 @@ MongoClient.connect(dbUrl, (err, db) => {
               } else {
                 const $ = cheerio.load(page.text)
                 res.send({
-                  content: $.html('.generated-html-container'),
+                  content: $.html('.bill_text_content'),
                   repId,
                   summary,
                   title,
