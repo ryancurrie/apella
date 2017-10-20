@@ -173,29 +173,26 @@ MongoClient.connect(dbUrl, (err, db) => {
             console.log(err)
             return res.sendStatus(500)
           } else {
-            superagent
-              .get(url + '/text')
-              .set('user-agent', 'Mozilla/5.0')
-              .then((page, err) => {
-                if (err) {
-                  console.log(err)
-                  return res.sendStatus(500)
-                } else {
-                  const $ = cheerio.load(page.text)
-                  res.send({
-                    content: $.html('.generated-html-container'),
-                    repId,
-                    summary,
-                    title,
-                    house_passage,
-                    senate_passage,
-                    enacted,
-                    active,
-                    primary_subject,
-                    introduced_date
-                  })
-                }
-              })
+            superagent.get(url + '/text').then((page, err) => {
+              if (err) {
+                console.log(err)
+                return res.sendStatus(500)
+              } else {
+                const $ = cheerio.load(page.text)
+                res.send({
+                  content: $.html('.generated-html-container'),
+                  repId,
+                  summary,
+                  title,
+                  house_passage,
+                  senate_passage,
+                  enacted,
+                  active,
+                  primary_subject,
+                  introduced_date
+                })
+              }
+            })
           }
         }
       )
