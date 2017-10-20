@@ -139,7 +139,7 @@ MongoClient.connect(dbUrl, (err, db) => {
         if (err) {
           return res.sendStatus(500)
         } else {
-          return {
+          res.send({
             url: resp.body.results[0].congressdotgov_url,
             repId: resp.body.results[0].sponsor_id,
             summary: resp.body.results[0].summary,
@@ -150,9 +150,10 @@ MongoClient.connect(dbUrl, (err, db) => {
             active: resp.body.results[0].active,
             primary_subject: resp.body.results[0].primary_subject,
             introduced_date: resp.body.results[0].introduced_date
-          }
+          })
         }
       })
+    /*
       .then(
         (
           {
@@ -195,7 +196,7 @@ MongoClient.connect(dbUrl, (err, db) => {
             })
           }
         }
-      )
+      )*/
   })
 
   app.get('/rep/campaign/:repId', ({ params: { repId } }, res) => {
