@@ -174,7 +174,9 @@ const renderReps = ({
     contact_form,
     phone,
     state,
-    office
+    office,
+    facebook_account,
+    twitter_account
   }
 }) => {
   const $repCard = document.createElement('div')
@@ -214,7 +216,29 @@ const renderReps = ({
 
   const $contact = document.createElement('a')
   $contact.textContent = 'Email'
-  $contact.setAttribute('href', `${contact_form}`)
+  if (contact_form) {
+    $contact.setAttribute('href', `${contact_form}`)
+  } else {
+    $contact.setAttribute('href', '#')
+    $contact.setAttribute(
+      'onclick',
+      "Materialize.toast('Sorry, no contact information for this representative', 4000, 'accent-color')"
+    )
+  }
+
+  const $socialPara = document.createElement('p')
+
+  const $fbLink = document.createElement('a')
+  $fbLink.setAttribute('href', `https://facebook.com/${facebook_account}`)
+
+  const $fbIcon = document.createElement('i')
+  $fbIcon.classList.add('icon', 'ion-social-facebook')
+
+  const $twLink = document.createElement('a')
+  $twLink.setAttribute('href', `https://twitter.com/${twitter_account}`)
+
+  const $twIcon = document.createElement('i')
+  $twIcon.classList.add('icon', 'ion-social-twitter')
 
   const $actionDiv = document.createElement('div')
   $actionDiv.classList.add('card-action')
@@ -247,6 +271,21 @@ const renderReps = ({
   $phonePara.appendChild($phone)
   $contentDiv.appendChild($contactPara)
   $contactPara.appendChild($contact)
+
+  if (facebook_account || twitter_account) {
+    $contentDiv.appendChild($socialPara)
+  }
+
+  if (facebook_account) {
+    $socialPara.appendChild($fbLink)
+    $fbLink.appendChild($fbIcon)
+  }
+
+  if (twitter_account) {
+    $socialPara.appendChild($twLink)
+    $twLink.appendChild($twIcon)
+  }
+
   $cardDiv.appendChild($actionDiv)
   $actionDiv.appendChild($cardAction)
 
@@ -264,7 +303,9 @@ const renderRep = ({
   contact_form,
   state,
   phone,
-  office
+  office,
+  twitter_account,
+  facebook_account
 }) => {
   const $repCard = document.createElement('div')
   $repCard.classList.add('row')
@@ -308,7 +349,25 @@ const renderRep = ({
     $contact.setAttribute('href', `${contact_form}`)
   } else {
     $contact.setAttribute('href', '#')
+    $contact.setAttribute(
+      'onclick',
+      "Materialize.toast('Sorry, no contact information for this representative', 4000, 'accent-color')"
+    )
   }
+
+  const $socialPara = document.createElement('p')
+
+  const $fbLink = document.createElement('a')
+  $fbLink.setAttribute('href', `https://facebook.com/${facebook_account}`)
+
+  const $fbIcon = document.createElement('i')
+  $fbIcon.classList.add('icon', 'ion-social-facebook')
+
+  const $twLink = document.createElement('a')
+  $twLink.setAttribute('href', `https://twitter.com/${twitter_account}`)
+
+  const $twIcon = document.createElement('i')
+  $twIcon.classList.add('icon', 'ion-social-twitter')
 
   $repCard.appendChild($card)
   $card.appendChild($imgDiv)
@@ -322,6 +381,19 @@ const renderRep = ({
   $phonePara.appendChild($phone)
   $contentDiv.appendChild($contactPara)
   $contactPara.appendChild($contact)
+  if (facebook_account || twitter_account) {
+    $contentDiv.appendChild($socialPara)
+  }
+
+  if (facebook_account) {
+    $socialPara.appendChild($fbLink)
+    $fbLink.appendChild($fbIcon)
+  }
+
+  if (twitter_account) {
+    $socialPara.appendChild($twLink)
+    $twLink.appendChild($twIcon)
+  }
 
   return $repCard
 }

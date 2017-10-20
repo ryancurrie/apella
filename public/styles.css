@@ -81,3 +81,8 @@
   line-height: 1.5;
   font-size: 1.25rem;
 }
+
+.icon {
+  margin-right: 1rem;
+  color: rgba(33, 150, 243, 1);
+}
