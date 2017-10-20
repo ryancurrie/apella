@@ -233,6 +233,7 @@ MongoClient.connect(dbUrl, (err, db) => {
       .set('x-api-key', process.env.PP_Key)
       .then((resp, err) => {
         if (err) {
+          console.log(err)
           return res.sendStatus(500)
         } else {
           return {
@@ -244,6 +245,8 @@ MongoClient.connect(dbUrl, (err, db) => {
       })
       .then((resp, err) => {
         if (err) {
+          console.log(resp)
+          console.log(err)
           return res.sendStatus(404)
         } else {
           res.render('bill', {
