@@ -1,5 +1,14 @@
-const express = require('express')
 require('dotenv').config()
+
+let dbUrl
+
+if (process.env.ENVIRONMENT === 'production') {
+  dbUrl = process.env.DB_Prod
+} else {
+  dbUrl = process.env.DB_Dev
+}
+
+const express = require('express')
 const path = require('path')
 const { MongoClient } = require('mongodb')
 const superagent = require('superagent')
@@ -7,7 +16,7 @@ const jsonParser = require('body-parser').json()
 const { updatePhone } = require('./phone.js')
 const cheerio = require('cheerio')
 
-MongoClient.connect('mongodb://localhost/apella', (err, db) => {
+MongoClient.connect(dbUrl, (err, db) => {
   if (err) {
     process.exit(1)
   }

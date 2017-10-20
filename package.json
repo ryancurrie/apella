@@ -4,6 +4,7 @@
   "description": "Making legislation more approachable.",
   "main": "index.js",
   "scripts": {
+    "go": "npm run seed && npm run start",
     "start": "node .",
     "watch": "nodemon .",
     "seed": "node seed.js",
