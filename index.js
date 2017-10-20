@@ -14,9 +14,14 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
   const representatives = db.collection('representatives')
 
   const app = express()
+  app.set('view engine', 'pug')
 
   const publicPath = path.join(__dirname, 'public')
   const staticMiddleware = express.static(publicPath)
+
+  app.get('/', (req, res) => {
+    res.render('index')
+  })
 
   app.use(staticMiddleware)
 
@@ -123,7 +128,6 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
       .set('x-api-key', process.env.PP_Key)
       .then((resp, err) => {
         if (err) {
-          console.log(err)
           return res.sendStatus(500)
         } else {
           return {
@@ -210,6 +214,34 @@ MongoClient.connect('mongodb://localhost/apella', (err, db) => {
                 res.send($contributors)
               }
             })
+        }
+      })
+  })
+
+  app.get('/bill/:billId', ({ params: { billId }, path }, res) => {
+    superagent
+      .get(`https://api.propublica.org/congress/v1/115/bills/${billId}.json`)
+      .set('x-api-key', process.env.PP_Key)
+      .then((resp, err) => {
+        if (err) {
+          return res.sendStatus(500)
+        } else {
+          return {
+            rep: resp.body.results[0].sponsor_id,
+            bill: billId,
+            path: path
+          }
+        }
+      })
+      .then((resp, err) => {
+        if (err) {
+          return res.sendStatus(404)
+        } else {
+          res.render('bill', {
+            bill: resp.bill,
+            rep: resp.rep,
+            path: resp.path
+          })
         }
       })
   })
